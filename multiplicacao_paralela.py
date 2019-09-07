@@ -1,5 +1,3 @@
-import posix_ipc
-import signal
 import threading
 import time
 
