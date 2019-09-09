@@ -4,17 +4,20 @@ import time
 line = -1
 column = -1
 lock = threading.Lock()
+cal = True
+pr = True
 
 def add(val1, val2, valor):
     valor = val1 * val2
     return valor
 
 
-def calculaLineByCol(matrizA, matrizB, matrizResult, i_posic, cal):
+def calculaLineByCol(matrizA, matrizB, matrizResult, i_posic, cal_):
         global line
         global column
         global Lock
-
+        global cal
+        global pr 
         while(cal):
                 if(line != -1 and column != -1):
                         lock.acquire()
@@ -23,7 +26,9 @@ def calculaLineByCol(matrizA, matrizB, matrizResult, i_posic, cal):
                                 for k in range(0, len(matrizA[0])):
                                         soma += add(matrizA[i_posic][k], matrizB[k][e], soma)
                                 matrizResult[i_posic][e] = soma
-                        print(matrizResult[line][column])
+                        if(pr):
+                                print(matrizResult[line][column])
+                                pr = False
                         line = -1
                         column = -1
                         lock.release()
@@ -69,7 +74,9 @@ def main():
         key = True
         global line
         global column
-        cal = True
+        global cal
+        global pr
+        pr = False
 
         matrizA = [[2,1,4], [0,1,1]]
         matrizB = [[6,3,-1,0], [1,1,0,4], [-2,5,0,2]]
@@ -94,18 +101,20 @@ def main():
                 threads.append(t1)
 
         while(key):
-                entrada = input("Deseja parar o programa? - S para sim, qualquer outra tecla pra não ")
-                if entrada == 'S':
-                        line = int(input("Digite linha que deseja executar "))
-                        column = int(input("Digite coluna que deseja executar "))
-                else:
+                if(not pr):
+                        entrada = input("Deseja continuar com o programa? - S para sim, qualquer outra tecla pra não ")
+                        if entrada == 'S':
+                                line = int(input("Digite linha que deseja executar "))
+                                column = int(input("Digite coluna que deseja executar "))
+                                pr = True
+                        else:
 
-                        print("Decorrido em paralelo: ", time.time()-t)
-                        print(matrizResult)
-                        cal = False
-                        for e in threads:
-                                e.join()
-                        exit(1)
-        
+                                print("Decorrido em paralelo: ", time.time()-t)
+                                print(matrizResult)
+                                cal = False
+                                for e in threads:
+                                        e.join()
+                                exit(1)
+                
 if __name__ == '__main__':
     main()
